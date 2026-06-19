@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Cinzel", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Custom fade scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.05);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.2);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(15, 23, 42, 0.4);
+}
+
+/* Animate the bullet comment flow precisely */
+@keyframes bullet-flow {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-150%);
+  }
+}
+
+.bullet-comment-fly {
+  animation: bullet-flow 11s linear infinite;
+  white-space: nowrap;
+}
+
+/* Pulse animation for Golden eyes representing blood level */
+@keyframes golden-pulse {
+  0%, 100% {
+    text-shadow: 0 0 4px #eab308, 0 0 12px rgba(234, 179, 8, 0.6);
+  }
+  50% {
+    text-shadow: 0 0 10px #eab308, 0 0 30px rgba(234, 179, 8, 0.9);
+  }
+}
+
+.golden-iris {
+  animation: golden-pulse 2s infinite ease-in-out;
+}
+

@@ -1,0 +1,6 @@
+{
+  "name": "龙族：卡塞尔宿舍日常与芬格尔羁绊",
+  "description": "以中国作家江南笔下的《龙族》为世界观的文字冒险与角色互动游戏。深度塑造芬格尔贱萌不羁却深藏不露的性格特点。包含卡塞尔校园宿舍文字冒险、守夜人论坛吐槽互动、动态好感度系统，以及基于Gemini的芬格尔实时互动聊天热线。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>龙族：卡塞尔大寝303日记 (芬格尔羁绊录) - Standalone Playable Edition</title>
+    <!-- Tailwind CSS Dynamic Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            850: '#1e293b',
+                            950: '#020617',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+                        mono: ['"Fira Code"', 'Consolas', 'monospace'],
+                    },
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts for Editorial Aesthetic -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Unpkg Lucide Icons script for absolute convenience and premium UI vectors -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #020617;
+            color: #f1f5f9;
+        }
+        /* Custom scrollbar to keep it sleek */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b1329;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d97706;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f59e0b;
+        }
+        /* Slid-in keyframes for bullet/narrative triggers */
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-in {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+        .danmaku-item {
+            animation: danmakuFloat 12s linear infinite;
+        }
+        @keyframes danmakuFloat {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-150%); }
+        }
+        /* Ambient card pulse */
+        .ambient-glow {
+            box-shadow: 0 0 20px rgba(217, 119, 6, 0.15);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col md:flex-row relative overflow-x-hidden antialiased select-none">
+
+    <!-- BRIEF TOAST OVERLAY -->
+    <div id="toast_container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2.5 max-w-[340px] pointer-events-none"></div>
+
+    <!-- MAIN SIDEBAR FOR DESKTOP -->
+    <aside class="hidden md:flex flex-col w-72 bg-slate-905 border-r border-slate-800 shrink-0 select-none bg-slate-900/60 backdrop-blur-md">
+        <!-- Cassell Oak Crest & Core Banner -->
+        <div class="p-6 border-b border-slate-800 flex flex-col items-center text-center">
+            <div class="w-20 h-20 bg-slate-950 rounded-full border-2 border-amber-500 flex items-center justify-center text-4xl shadow-xl relative mb-4 hover:rotate-6 transition-transform duration-300">
+                🐉
+                <span class="absolute -bottom-1 -right-1 bg-amber-500 rounded-full w-6 h-6 flex items-center justify-center border-2 border-slate-950 shadow-md">
+                    <i data-lucide="shield-check" class="text-slate-950 w-3.5 h-3.5"></i>
+                </span>
+            </div>
+            <h1 class="text-base font-bold font-serif text-amber-500 tracking-wider uppercase select-none">
+                卡塞尔学院 · 303室
+            </h1>
+            <p class="text-[10px] text-slate-500 font-mono mt-1 tracking-widest uppercase">CASSELL RUNTIME PORTABLE</p>
+        </div>
+
+        <!-- Live Bloodline Registry Deck -->
+        <div class="px-6 py-4 border-b border-slate-800 bg-slate-950/40">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-[10px] text-slate-500 font-mono tracking-wider uppercase">我的契约执照</span>
+                <span id="aside_grade" class="text-[10px] font-bold font-mono px-1.5 py-0.5 rounded border shadow-inner text-green-500 border-green-500 bg-green-950/20">
+                    C 级血统
+                </span>
+            </div>
+            <div class="flex items-center justify-between text-xs font-mono text-slate-400 mt-2">
+                <div class="flex items-center gap-1.5">
+                    <i data-lucide="coins" class="text-amber-500 w-3.5 h-3.5 animate-pulse"></i>
+                    <span>论坛绩点：</span>
+                </div>
+                <span id="aside_points" class="text-amber-300 font-bold text-sm">100 pt</span>
+            </div>
+        </div>
+
+        <!-- System Navigation Tabs -->
+        <nav class="flex-1 p-4 space-y-1.5">
+            <button onclick="switchTab('story')" id="tab_story" class="sidebar-tab active-tab w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all bg-amber-950/30 text-amber-300 border-l-4 border-amber-500 font-medium">
+                <i data-lucide="book-open" class="w-4.5 h-4.5 text-amber-500"></i>
+                <span>宿舍主线 (文字决择)</span>
+            </button>
+            <button onclick="switchTab('chat')" id="tab_chat" class="sidebar-tab w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-slate-400 hover:bg-slate-800/40 hover:text-slate-200 transition-all border-l-4 border-transparent font-medium">
+                <i data-lucide="message-square" class="w-4.5 h-4.5 text-slate-500"></i>
+                <span>芬格尔热线 (互动聊天)</span>
+            </button>
+            <button onclick="switchTab('forum')" id="tab_forum" class="sidebar-tab w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-slate-400 hover:bg-slate-800/40 hover:text-slate-200 transition-all border-l-4 border-transparent font-medium">
+                <i data-lucide="globe" class="w-4.5 h-4.5 text-slate-500"></i>
+                <span>守夜人论坛 (狗仔大队)</span>
+            </button>
+            <button onclick="switchTab('store')" id="tab_store" class="sidebar-tab w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-slate-400 hover:bg-slate-800/40 hover:text-slate-200 transition-all border-l-4 border-transparent font-medium">
+                <i data-lucide="shopping-bag" class="w-4.5 h-4.5 text-slate-500"></i>
+                <span>积分黑市 (机密解码)</span>
+            </button>
+            <button onclick="switchTab('profile')" id="tab_profile" class="sidebar-tab w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-slate-400 hover:bg-slate-800/40 hover:text-slate-200 transition-all border-l-4 border-transparent font-medium">
+                <i data-lucide="award" class="w-4.5 h-4.5 text-slate-500"></i>
+                <span>守夜人印记与羁绊</span>
+            </button>
+        </nav>
+
+        <!-- Side Bottom Credits -->
+        <div class="p-6 border-t border-slate-800 text-center text-[11px] text-slate-600 font-mono">
+            <p>卡塞尔大寝终端 v2.1</p>
+            <p class="mt-0.5">Dragonslayer's Guild</p>
+        </div>
+    </aside>
+
+    <!-- MOBILE NAVIGATION OVERLAY / COMPACT TOP DECK -->
+    <div class="md:hidden flex items-center justify-between bg-slate-900 border-b border-slate-800 px-4 py-3 z-30 select-none">
+        <div class="flex items-center gap-2">
+            <span class="text-xl">🐉</span>
+            <span class="text-xs font-bold font-serif text-amber-500 tracking-wider">卡塞尔 303 双娇</span>
+        </div>
+        <div class="flex items-center gap-3 text-xs font-mono">
+            <span id="mobile_grade" class="text-xs font-bold px-1.5 py-0.2 rounded border text-green-500 border-green-500 bg-green-950/20">C级</span>
+            <span id="mobile_points" class="text-amber-400 font-bold">100 pt</span>
+            <button onclick="toggleMobileMenu()" class="text-slate-400 hover:text-slate-100 focus:outline-none">
+                <i id="mobile_menu_icon" data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- MOBILE DROPDOWN LINKS -->
+    <div id="mobile_dropdown" class="hidden md:hidden absolute left-0 top-[49px] w-full bg-slate-900/95 border-b border-slate-800 flex-col py-2 px-4 space-y-1 z-40 select-none backdrop-blur-md">
+        <button onclick="switchTab('story')" class="mobile-tab flex items-center gap-2.5 py-2.5 text-xs text-amber-300 font-semibold border-b border-slate-800/40">
+            <i data-lucide="book-open" class="w-4 h-4 text-amber-500"></i>
+            <span>大宿舍主线 (文字)</span>
+        </button>
+        <button onclick="switchTab('chat')" class="mobile-tab flex items-center gap-2.5 py-2.5 text-xs text-slate-300 border-b border-slate-800/40">
+            <i data-lucide="message-square" class="w-4 h-4 text-slate-400"></i>
+            <span>芬格尔幽默热线</span>
+        </button>
+        <button onclick="switchTab('forum')" class="mobile-tab flex items-center gap-2.5 py-2.5 text-xs text-slate-300 border-b border-slate-800/40">
+            <i data-lucide="globe" class="w-4 h-4 text-slate-400"></i>
+            <span>守夜人论坛 (八卦)</span>
+        </button>
+        <button onclick="switchTab('store')" class="mobile-tab flex items-center gap-2.5 py-2.5 text-xs text-slate-300 border-b border-slate-800/40">
+            <i data-lucide="shopping-bag" class="w-4 h-4 text-slate-400"></i>
+            <span>黑市购买机密</span>
+        </button>
+        <button onclick="switchTab('profile')" class="mobile-tab flex items-center gap-2.5 py-2.5 text-xs text-slate-300">
+            <i data-lucide="award" class="w-4 h-4 text-slate-400"></i>
+            <span>勋章与秘密解锁</span>
+        </button>
+    </div>
+
+    <!-- MAIN GAME CHASSIS -->
+    <main class="flex-1 flex flex-col min-h-0 bg-slate-950 relative">
+
+        <!-- TAB SECTION 1: STORY BOARD (VISUAL NOVEL VIEW) -->
+        <section id="pane_story" class="flex-1 flex flex-col p-4 md:p-8 relative min-h-0">
+            
+            <!-- Bullet Danmaku Overlay Layer (吐槽弹幕) -->
+            <div id="bullet_lane" class="absolute inset-x-0 top-6 h-36 overflow-hidden pointer-events-none z-10 hidden md:block">
+                <!-- Bullet comments dynamically spawned in key intervals -->
+            </div>
+
+            <div class="w-full max-w-4xl mx-auto flex-1 flex flex-col justify-between">
+                
+                <!-- Topic and Node Header -->
+                <div class="flex items-center justify-between border-b border-slate-800/60 pb-3">
+                    <div class="flex items-center gap-2.5">
+                        <span class="inline-block bg-amber-600/20 text-amber-400 font-bold px-2 py-0.5 rounded text-xs select-none">
+                            第1章 败狗大寝303
+                        </span>
+                        <h2 id="story_chapter_title" class="text-xs md:text-sm font-sans font-medium text-slate-450 tracking-wider">
+                            第一章：大寝室里那热气腾腾的泡面
+                        </h2>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button onclick="toggleBullets()" id="bullet_toggle_btn" class="flex items-center gap-1.5 px-2.5 py-1 text-slate-400 hover:text-amber-400 border border-slate-800 hover:border-amber-600/40 rounded text-xs transition-colors focus:outline-none">
+                            <i data-lucide="volume-2" class="w-3.5 h-3.5"></i>
+                            <span id="bullet_toggle_text">吐槽弹幕: 开</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- MIDDLE STAGE (Immersive Ambient Backdrop with Characters) -->
+                <div id="story_stage" class="relative my-6 h-64 md:h-80 rounded-xl overflow-hidden shadow-2xl border border-slate-800 flex flex-col justify-between p-6 bg-gradient-to-br transition-all duration-500 ease-out ambient-glow">
+                    <!-- Dynamic Background location Badge -->
+                    <div class="flex justify-between items-start">
+                        <span id="stage_badge_place" class="bg-slate-900/90 border border-slate-800 text-amber-300 rounded-full px-3.5 py-1 text-xs font-semibold flex items-center gap-1">
+                            <span id="stage_badge_icon">🏠</span> <span id="stage_badge_text">卡塞尔303大寝</span>
+                        </span>
+                        <!-- Quick Finger Quote sticker -->
+                        <span class="text-[11px] text-slate-500 font-mono tracking-widest bg-slate-950/60 px-2 py-1 rounded">303 ROOM TERMINAL</span>
+                    </div>
+
+                    <!-- Ambient graphic silhouette or dramatic illustration -->
+                    <div class="absolute inset-x-0 bottom-0 top-12 flex justify-center items-end pointer-events-none overflow-hidden select-none">
+                        <!-- High quality aesthetic placeholder -->
+                        <div id="stage_character" class="opacity-15 hover:opacity-25 transition-opacity text-[150px] md:text-[200px] select-none leading-none mb-0">🐕</div>
+                    </div>
+
+                    <!-- Narrative quote metadata bubble icon -->
+                    <div class="flex justify-end pr-1">
+                        <div class="bg-slate-900/85 w-10 h-10 border border-slate-800 rounded-full flex items-center justify-center text-amber-500 shadow-md">
+                            <i data-lucide="bookmark" class="w-5 h-5 text-amber-500"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LOWER INTERFACE: Text narrative scroll -->
+                <div class="bg-slate-900/80 border border-slate-800/80 rounded-xl p-5 mb-4">
+                    <div class="flex items-center gap-2 mb-2.5">
+                        <span id="story_speaker" class="text-sm font-semibold px-2.5 py-0.5 rounded border text-amber-400 border-amber-500/40 bg-amber-950/25">
+                            芬格尔
+                        </span>
+                        <span id="story_speaker_role" class="text-[10px] text-slate-500 font-mono">
+                            败狗师兄 / F级退化元老
+                        </span>
+                    </div>
+                    <p id="story_text" class="text-sm md:text-base leading-relaxed tracking-wide text-slate-200">
+                        “师弟……师弟啊！你终于把入学行李拖进咱们这全校第一狗窝了。来，坐，别客气！别看师兄我目前面临被逐出豪门降到F级的命运，但在忽弄高层、骗食堂老坛酸菜泡面这格调上，整个卡塞尔都没人敢跟我争第一！”
+                    </p>
+                </div>
+
+                <!-- ACTION BUTTON CHOICES PANEL -->
+                <div id="story_choices" class="grid grid-cols-1 gap-2.5 pb-6">
+                    <!-- Hydrated via game loop dynamically -->
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB SECTION 2: CHAT HUB (DYNAMIC DIALOGUE TERMINAL) -->
+        <section id="pane_chat" class="flex-1 flex flex-col p-4 md:p-8 relative min-h-0 hidden">
+            <div class="w-full max-w-4xl mx-auto flex-1 flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+                <!-- Chat Window Topbar status -->
+                <div class="bg-slate-950 px-5 py-4 border-b border-slate-800 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <img src="https://images.unsplash.com/photo-1628157582853-a796fa650a6a?auto=format&fit=crop&w=120&h=120" class="w-10 h-10 rounded-full border border-amber-500 shadow-inner" alt="">
+                        <div>
+                            <div class="flex items-center gap-1.5">
+                                <h3 class="text-sm font-bold text-amber-400">芬格尔 · 冯 · 弗林斯</h3>
+                                <span class="bg-yellow-500/10 text-yellow-500 px-1.5 py-0.2 rounded text-[10px] border border-yellow-500/30 font-semibold font-mono">303-HOTLINE</span>
+                            </div>
+                            <div class="flex items-center gap-1 text-[10px] text-emerald-500 font-mono">
+                                <span class="h-1.5 w-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                                <span>当前言灵结界：青铜御 (深度备存活性中)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Channel Mode Switcher -->
+                    <div class="flex items-center gap-2">
+                        <label for="chat_mode_select" class="text-xs text-slate-500 font-mono hidden sm:inline">人格频道:</label>
+                        <select id="chat_mode_select" onchange="changeChatChannel()" class="bg-slate-900 border border-slate-800 text-amber-400 text-xs rounded-md px-2 py-1.5 focus:ring-1 focus:ring-amber-500 focus:outline-none">
+                            <option value="beggar">🍗 废柴室友 (卑微蹭肉食模式)</option>
+                            <option value="paparazzi">📸 新闻狗仔 (情报守夜人头子)</option>
+                            <option value="hero">🛡️ 昔日A级 (格陵兰铁血硬汉)</option>
+                            <option value="eva">📡 赛博契约 (EVA联合同屏调试)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Messages container -->
+                <div id="chat_scroll" class="flex-1 p-5 overflow-y-auto space-y-4 bg-slate-950/30">
+                    <div class="flex gap-3 max-w-[85%] select-text animate-slide-in">
+                        <img src="https://images.unsplash.com/photo-1628157582853-a796fa650a6a?auto=format&fit=crop&w=120&h=120" class="w-8 h-8 rounded-full shrink-0 border border-slate-800" alt="">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-xs font-bold text-slate-400">芬格尔</span>
+                                <span class="text-[9px] text-slate-600 font-mono">20:08</span>
+                            </div>
+                            <div class="bg-slate-900 border border-slate-800 rounded-2xl rounded-tl-none p-3.5 text-xs md:text-sm text-slate-200 leading-relaxed tracking-wide shadow-md">
+                                “师弟！师弟！在不？我看见你刚才顺利通过了303深夜大考，这要是不点顿德国大肘子配拉格啤酒敲钟弹吉他庆祝一下，说得过去吗？点单的pt算在下一期你借我的额度里如何？嘿嘿嘿！”
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Messages populated progressively -->
+                </div>
+
+                <!-- Built-in preset suggestions list -->
+                <div class="px-5 py-2 border-t border-slate-800/40 bg-slate-950/60 flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide py-3 select-none">
+                    <button onclick="sendPresetMsg('学长，咱们这学期怎么混绩点？你能不能帮我作弊？')" class="text-xs px-3 py-1.5 bg-slate-900 border border-slate-800 hover:border-amber-600/45 text-slate-300 rounded-full transition-all focus:outline-none">
+                        🎓 怎么混绩点？
+                    </button>
+                    <button onclick="sendPresetMsg('听说师兄以前是A级的王牌天才，真的假的？发生了什么？')" class="text-xs px-3 py-1.5 bg-slate-900 border border-slate-800 hover:border-amber-600/45 text-slate-300 rounded-full transition-all focus:outline-none">
+                        🧭 师兄的A级过往
+                    </button>
+                    <button onclick="sendPresetMsg('能透露以下昂热校长或者恺撒少爷的八卦吗？最好值钱的那种')" class="text-xs px-3 py-1.5 bg-slate-900 border border-slate-800 hover:border-amber-600/45 text-slate-300 rounded-full transition-all focus:outline-none">
+                        📸 爆料恺撒与校长
+                    </button>
+                    <button onclick="sendPresetMsg('EVA大姐，在不？能帮我黑入装备部的电脑查查这个绩点到底是谁改的吗？')" class="text-xs px-3 py-1.5 bg-slate-900 border border-slate-800 hover:border-amber-600/45 text-slate-300 rounded-full transition-all focus:outline-none">
+                        📡 EVA同屏呼叫
+                    </button>
+                </div>
+
+                <!-- Input box interface -->
+                <div class="p-4 bg-slate-950 border-t border-slate-800 flex items-center gap-3">
+                    <input type="text" id="chat_input_text" onkeydown="handleInputKey(event)" class="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-4 py-3 text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500" placeholder="打个暗号：师弟，今晚食堂烤香肠打五折...">
+                    <button id="chat_send_btn" onclick="sendChatFromInput()" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold px-4 py-3 rounded-lg text-xs tracking-wider uppercase transition-all flex items-center gap-1.5 hover:scale-[1.02] active:scale-95 focus:outline-none">
+                        <span>发送</span>
+                        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB SECTION 3: NIGHTWATCHMAN FORUM (FORUM BOARD) -->
+        <section id="pane_forum" class="flex-1 flex flex-col p-4 md:p-8 relative min-h-0 hidden">
+            <div class="w-full max-w-4xl mx-auto flex-1 flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+                <!-- Forum Header -->
+                <div class="bg-slate-950 px-6 py-5 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 select-none">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-indigo-950 border border-indigo-500/30 rounded flex items-center justify-center text-xl shadow-lg">
+                            🌐
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-bold text-slate-100 font-serif tracking-wider">守夜人论坛 (Nightwatchman Forum)</h3>
+                                <span class="bg-rose-500/10 text-rose-500 px-1.5 py-0.2 rounded text-[9px] border border-rose-500/20 font-mono">内网加密</span>
+                            </div>
+                            <p class="text-[10px] text-slate-500 font-mono mt-0.5">ADMINISTRATOR: FINGER_VON_FRINGS (FINANCIAL LEVEL S)</p>
+                        </div>
+                    </div>
+
+                    <!-- Forum posting wizard with dynamic keywords -->
+                    <div class="flex items-center gap-2 shrink-0">
+                        <input type="text" id="forum_topic_input" class="bg-slate-900 border border-slate-800 text-slate-200 text-xs rounded px-3 py-1.8 placeholder:text-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 w-36" placeholder="输入谣言词...">
+                        <button onclick="createDynamicPost()" class="bg-indigo-600 hover:bg-indigo-500 text-slate-100 font-bold px-3 py-1.8 rounded text-xs transition-colors flex items-center gap-1 focus:outline-none">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                            <span>爆料谣言</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Forum feed container -->
+                <div id="forum_feed_scroll" class="flex-1 p-6 overflow-y-auto space-y-6">
+                    
+                    <!-- Pinned Thread 1 -->
+                    <div class="bg-slate-950/70 border border-indigo-950/80 rounded-xl p-5 hover:border-indigo-600/30 transition-all shadow-md">
+                        <div class="flex items-center justify-between mb-3.5 select-none">
+                            <div class="flex items-center gap-2.5">
+                                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&h=80 " class="w-8 h-8 rounded-full border border-indigo-500/20" alt="">
+                                <div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-xs font-bold text-slate-200">守夜人总督</span>
+                                        <span class="text-[9px] text-indigo-400 bg-indigo-950 px-1 py-0.2 rounded border border-indigo-900">管理员 [A]</span>
+                                    </div>
+                                    <span class="text-[9px] text-slate-500 font-mono">2小时前</span>
+                                </div>
+                            </div>
+                            <span class="bg-yellow-500/10 text-yellow-500 border border-yellow-500/30 text-[9px] font-bold px-2 py-0.5 rounded font-mono select-none flex items-center gap-1">
+                                <span class="animate-ping h-1.5 w-1.5 bg-yellow-400 rounded-full"></span> 顶置置顶
+                            </span>
+                        </div>
+                        <h4 class="text-sm font-semibold text-slate-100 mb-2 leading-snug">
+                            🛡️ 【校规常识】入宿303室三大铁律：禁吃装备部的炸药披萨，禁动副校长的德国啤酒，禁用劣质泡面汤灌溉阳台盆栽！
+                        </h4>
+                        <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                            卡塞尔新一任的牛人舍友已经进驻了传说中的无敌修罗场床位——303室。作为历年来万年吊车尾、混绩点狂魔、新闻部无冕之皇芬格尔的舍友，请务必严格警惕以下行径，以免你珍贵的论坛点数充公！
+                        </p>
+                        <div class="flex items-center gap-4 text-xs font-mono text-slate-500 select-none">
+                            <button onclick="likeStaticPost(this)" class="flex items-center gap-1 hover:text-rose-400 transition-colors">
+                                <i data-lucide="thumbs-up" class="w-3.5 h-3.5"></i>
+                                <span>352 拜读</span>
+                            </button>
+                            <span class="flex items-center gap-1">
+                                <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+                                <span>18条高评</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Pinned Thread 2 -->
+                    <div class="bg-slate-950/70 border border-indigo-950/80 rounded-xl p-5 hover:border-indigo-600/30 transition-all shadow-md">
+                        <div class="flex items-center justify-between mb-3.5 select-none">
+                            <div class="flex items-center gap-2.5">
+                                <img src="https://images.unsplash.com/photo-1628157582853-a796fa650a6a?auto=format&fit=crop&w=80&h=80" class="w-8 h-8 rounded-full border border-slate-700" alt="">
+                                <div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-xs font-bold text-slate-200">败狗之王芬格尔</span>
+                                        <span class="text-[9px] text-slate-400 bg-slate-950 px-1 py-0.2 rounded border border-slate-800">本部长 [F]</span>
+                                    </div>
+                                    <span class="text-[9px] text-slate-500 font-mono">1小时前</span>
+                                </div>
+                            </div>
+                            <span class="bg-rose-500/10 text-rose-500 border border-rose-500/20 text-[9px] font-bold px-2 py-0.5 rounded select-none flex items-center gap-1">
+                                🔥 独家热卖
+                            </span>
+                        </div>
+                        <h4 class="text-sm font-semibold text-slate-100 mb-2 leading-snug">
+                            📸 【情报局独加】恺撒大少最新晒伤照，以及全校流传的加图索专用金色香水配方！仅需10论坛积分！
+                        </h4>
+                        <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                            根据本派驻学生会地下十五层洗衣房的密探拼死手抄的情报，恺撒会长在本周进行沙滩炼金游艇测试时，由于在发梢上涂了过量的加图索防紫外线发胶，导致直射太阳光波产生了极其强劲的微晶变彩衍射效应。照片里光彩夺目，欲买从速！
+                        </p>
+                        <div class="flex items-center gap-4 text-xs font-mono text-slate-500 select-none">
+                            <button onclick="likeStaticPost(this)" class="flex items-center gap-1 hover:text-rose-400 transition-colors">
+                                <i data-lucide="thumbs-up" class="w-3.5 h-3.5"></i>
+                                <span>512 赞赏</span>
+                            </button>
+                            <span class="flex items-center gap-1">
+                                <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+                                <span>99条吐槽回复</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Location for Dynamic gossips -->
+                    <div id="dynamic_forum_target"></div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB SECTION 4: BLACK MARKET STORE (CURRENCY STORE) -->
+        <section id="pane_store" class="flex-1 flex flex-col p-4 md:p-8 relative min-h-0 hidden">
+            <div class="w-full max-w-4xl mx-auto flex-1 flex flex-col min-h-0 select-none">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-amber-950 border border-amber-500/25 rounded flex items-center justify-center text-xl shadow-lg">
+                            💰
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-100 font-serif tracking-wider">守夜人论坛积分黑市 (Campus Black-Market Store)</h3>
+                            <p class="text-[10px] text-slate-500 font-mono tracking-wide uppercase">DORM ROOM 303 ACCESSIBLE CLASSIFIED OUTLET</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stores grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
+                    <!-- Store Item 1 -->
+                    <div class="bg-indigo-950/20 border border-slate-800 rounded-xl p-5 hover:border-amber-600/30 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="bg-amber-600/20 text-amber-500 rounded p-2.5 flex items-center justify-center">
+                                    <i data-lucide="shield" class="w-6 h-6"></i>
+                                </span>
+                                <span class="text-amber-400 font-mono text-sm font-bold">120 pt</span>
+                            </div>
+                            <h4 class="text-sm font-bold text-slate-100 mb-1">【绝密手卷】：格陵兰惨案幸存记录</h4>
+                            <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                                记录了昔日A级王牌天才芬格尔在格陵兰冰川深处、与毁灭性的纯血古龙搏杀时遭遇极寒暗流的加密文档。购买后可解锁芬格尔内心深处的格陵兰羁绊属性。
+                            </p>
+                        </div>
+                        <button onclick="buyMarketItem('greenlandIncident', 120, '【绝密手卷】：格陵兰惨案幸存记录')" class="w-full bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold py-2 px-4 rounded text-xs select-none shadow hover:scale-[1.01] transition-all">
+                            解锁绝密文档
+                        </button>
+                    </div>
+
+                    <!-- Store Item 2 -->
+                    <div class="bg-indigo-950/20 border border-slate-800 rounded-xl p-5 hover:border-cyan-600/30 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="bg-cyan-600/20 text-cyan-400 rounded p-2.5 flex items-center justify-center">
+                                    <i data-lucide="globe" class="w-6 h-6"></i>
+                                </span>
+                                <span class="text-cyan-400 font-mono text-sm font-bold">100 pt</span>
+                            </div>
+                            <h4 class="text-sm font-bold text-slate-100 mb-1">【主板直连】：EVA数字终端信道证书</h4>
+                            <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                                接入卡塞尔超级防壁中控，解锁与前任人工智能主脑EVA的灵魂数据通讯协议。购买后在芬格尔契约内获得EVA的温柔协力与专属彩蛋频道接入。
+                            </p>
+                        </div>
+                        <button onclick="buyMarketItem('evaConnection', 100, '【主板直连】：EVA数字终端信道证书')" class="w-full bg-cyan-600 hover:bg-cyan-500 text-slate-955 font-bold py-2 px-4 rounded text-xs select-none shadow hover:scale-[1.01] transition-all">
+                            获取信道通碟
+                        </button>
+                    </div>
+
+                    <!-- Store Item 3 -->
+                    <div class="bg-indigo-950/20 border border-slate-800 rounded-xl p-5 hover:border-yellow-600/30 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="bg-yellow-600/20 text-yellow-500 rounded p-2.5 flex items-center justify-center">
+                                    <i data-lucide="award" class="w-6 h-6"></i>
+                                </span>
+                                <span class="text-yellow-400 font-mono text-sm font-bold">80 pt</span>
+                            </div>
+                            <h4 class="text-sm font-bold text-slate-100 mb-1">【旧日残勋】：A级精英荣誉纪念章</h4>
+                            <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                                芬格尔曾经在大一绩点爆表时由昂热校长亲手颁发的金色枫叶大十字荣誉纪念勋章。见证了那个尚未退化成大金毛食肉动物之前的王牌荣光。
+                            </p>
+                        </div>
+                        <button onclick="buyMarketItem('prodigyPast', 80, '【旧日残勋】：A级精英荣誉纪念章')" class="w-full bg-yellow-600 hover:bg-yellow-500 text-slate-955 font-bold py-2 px-4 rounded text-xs select-none shadow hover:scale-[1.01] transition-all">
+                            赎回王牌荣誉
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB SECTION 5: PROFILE HUB (STATS SCREEN) -->
+        <section id="pane_profile" class="flex-1 flex flex-col p-4 md:p-8 relative min-h-0 hidden">
+            <div class="w-full max-w-4xl mx-auto flex-1 flex flex-col bg-slate-900 border border-slate-800 rounded-xl p-6 overflow-y-auto select-none">
+                <h3 class="text-base font-bold font-serif text-amber-400 mb-5 border-b border-slate-800 pb-3">
+                    🏰 守夜人契约契合度 (My Cassell Stat Deck)
+                </h3>
+
+                <!-- Core Stats Cards Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-slate-950 p-4 border border-slate-800 rounded-lg text-center shadow">
+                        <span class="text-[10px] text-slate-500 font-mono uppercase">我的学分评级</span>
+                        <h4 id="stat_profile_grade" class="text-2xl mt-1 font-extrabold text-green-500">C 级血统</h4>
+                    </div>
+                    <div class="bg-slate-950 p-4 border border-slate-800 rounded-lg text-center shadow">
+                        <span class="text-[10px] text-slate-500 font-mono uppercase">芬格尔好感度</span>
+                        <h4 id="stat_finger_favor" class="text-2xl mt-1 font-extrabold text-amber-500">10 cp</h4>
+                    </div>
+                    <div class="bg-slate-950 p-4 border border-slate-800 rounded-lg text-center shadow">
+                        <span class="text-[10px] text-slate-500 font-mono uppercase">路明非亲密度</span>
+                        <h4 id="stat_lumingfei_favor" class="text-2xl mt-1 font-extrabold text-blue-500">0 cp</h4>
+                    </div>
+                    <div class="bg-slate-950 p-4 border border-slate-800 rounded-lg text-center shadow">
+                        <span class="text-[10px] text-slate-500 font-mono uppercase">恺撒结实度</span>
+                        <h4 id="stat_caesar_favor" class="text-2xl mt-1 font-extrabold text-purple-500">0 cp</h4>
+                    </div>
+                </div>
+
+                <!-- Achievements / Secret documents status -->
+                <h4 class="text-xs font-bold font-serif text-slate-400 mb-3 uppercase tracking-wider">我破解的密件文档</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                    
+                    <div id="badge_bond_brother" class="bg-slate-950 border border-amber-600/30 p-4 rounded-lg flex items-center justify-between shadow opacity-100">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">🤝</span>
+                            <div>
+                                <h5 class="text-xs font-bold text-amber-200">废柴双星的盟约</h5>
+                                <p class="text-[11px] text-slate-500 mt-0.5">303大寝室两只废柴相濡以沫的无赖协议。</p>
+                            </div>
+                        </div>
+                        <span class="bg-amber-600/20 text-amber-400 text-[9px] font-bold px-2 py-0.5 rounded uppercase">初始已解锁</span>
+                    </div>
+
+                    <div id="badge_bond_greenland" class="bg-slate-950 border border-slate-800 p-4 rounded-lg flex items-center justify-between shadow opacity-40">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">❄️</span>
+                            <div>
+                                <h5 class="text-xs font-bold text-slate-300">格陵兰暗影残卷</h5>
+                                <p class="text-[11px] text-slate-500 mt-0.5">封存了格陵兰大冰洋那一死狂战往事。</p>
+                            </div>
+                        </div>
+                        <span id="badge_greenland_text" class="bg-slate-800 text-slate-500 text-[9px] font-bold px-2 py-0.5 rounded uppercase">未锁文档</span>
+                    </div>
+
+                    <div id="badge_bond_eva" class="bg-slate-950 border border-slate-800 p-4 rounded-lg flex items-center justify-between shadow opacity-40">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">📡</span>
+                            <div>
+                                <h5 class="text-xs font-bold text-slate-300">诺玛与EVA的赛博星轨</h5>
+                                <p class="text-[11px] text-slate-500 mt-0.5">接入卡塞尔超算，唤醒永存的淡蓝虚影。</p>
+                            </div>
+                        </div>
+                        <span id="badge_eva_text" class="bg-slate-800 text-slate-500 text-[9px] font-bold px-2 py-0.5 rounded uppercase">未锁信道</span>
+                    </div>
+
+                    <div id="badge_bond_prodigy" class="bg-slate-950 border border-slate-800 p-4 rounded-lg flex items-center justify-between shadow opacity-40">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">🏅</span>
+                            <div>
+                                <h5 class="text-xs font-bold text-slate-300">昔日王牌的勋章</h5>
+                                <p class="text-[11px] text-slate-500 mt-0.5">让留级狗芬格尔短暂忆起天才的余光。</p>
+                            </div>
+                        </div>
+                        <span id="badge_prodigy_text" class="bg-slate-800 text-slate-500 text-[9px] font-bold px-2 py-0.5 rounded uppercase">未锁勋章</span>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- CRITICAL CORE PLAYABLE JS ENGINE -->
+    <script>
+        // Game State Core Dictionary
+        const stats = {
+            fingerFavorability: 10,
+            luMingfeiFavorability: 0,
+            caesarFavorability: 0,
+            academicGrade: "C",
+            forumPoints: 100,
+            secretsUnlocked: {
+                greenlandIncident: false,
+                evaConnection: false,
+                prodigyPast: false,
+                brotherhood: true
+            }
+        };
+
+        // Static Complete Visual Novel Adventure Map
+        const STORY_NODES = {
+            "c1_intro": {
+                title: "第一章：大寝室里那热气腾腾的泡面",
+                text: "“师弟……师弟啊！你终于把入学行李拖进咱们这全校第一狗窝了。来，坐，别客气！别看师兄我目前面临被逐出豪门降到F级的命运，但在骗吃骗喝、忽弄古德里安教授这格调上，我拍胸脯保证，卡塞尔没人敢抢第一！”",
+                narrator: "芬格尔",
+                backgroundImage: "dorm_view",
+                choices: [
+                    {
+                        text: "“学长，这宿舍也太乱了吧，你床上那条发霉的红格子衬衫是不是都长蘑菇了？”",
+                        nextId: "c1_dust_complain",
+                        favorability: { finger: 5 }
+                    },
+                    {
+                        text: "“（递上一盒高级德国拉格黑啤）师兄，初来乍到，这是孝敬您的。”",
+                        nextId: "c1_beer_gift",
+                        favorability: { finger: 25 },
+                        points: 50
+                    },
+                    {
+                        text: "“学长好，我其实是S级路明非的朋友。他让我带一句话：让芬格尔把欠他的5美金还了！”",
+                        nextId: "c1_lumingfei_debt",
+                        favorability: { luMingfei: 15 }
+                    }
+                ]
+            },
+            "c1_dust_complain": {
+                title: "第一章：发霉的衬衫与老坛酸菜泡面",
+                text: "“胡说！什么长蘑菇，那叫生命科学前沿真菌炼金培养物！”芬格尔两手一摊，端起一盒热腾腾的面，“说真的，初来乍到303，咱们得整点隆重的欢迎仪式。师兄我特地用电磁炉给你秘密煮了顶级配料的老坛酸菜方便面！虽然不加卤蛋，但看在咱们同门败狗的情谊上，分你一半！”",
+                narrator: "芬格尔",
+                backgroundImage: "eating_noodle",
+                choices: [
+                    {
+                        text: "“太感动了！谢谢师兄，以后守夜人论坛发通帖记得多罩着我！”",
+                        nextId: "c1_midnight_raid_intro",
+                        points: 100
+                    },
+                    {
+                        text: "“……我建议这盒方便面还是你自己享用吧。我有点胃疼，先睡了。”",
+                        nextId: "c1_midnight_raid_intro"
+                    }
+                ]
+            },
+            "c1_beer_gift": {
+                title: "第一章：夜幕下的拉格黑啤酒",
+                text: "芬格尔看到拉格黑啤，黄金瞳瞬间发亮了三千千瓦！他当场跪地保大腿，擦着哈巴口水狂叫：“哇塞！德国进口的！师弟你就是我在这极寒校园里唯一的太阳！为了这罐顶级拉格，今明两年你的新闻部绩点我全保了！以后你就是我芬格尔罩着的二霸主！”",
+                narrator: "芬格尔",
+                backgroundImage: "eating_sausage",
+                choices: [
+                    {
+                        text: "“师兄面子太大了，走，咱们去走廊吹风去！”",
+                        nextId: "c1_midnight_raid_intro"
+                    }
+                ]
+            },
+            "c1_lumingfei_debt": {
+                title: "第一章：路明非那五美金的恩怨",
+                text: "“什么！那个死衰仔居然还惦记着大一跨国快递给我的那五美分？！我都用一整个论坛置顶帖的‘卡塞尔特星无敌俊男路明非’替他单相思打掩护了好吗！”芬格尔哀鸣着，“他那也是混绩点，在303这里，有福同享，有债同赖嘛！”",
+                narrator: "芬格尔",
+                backgroundImage: "dorm_dust",
+                choices: [
+                    {
+                        text: "“好吧……那咱们这学期的任务到底是什么？能带我赚点点数吗？”",
+                        nextId: "c1_midnight_raid_intro"
+                    }
+                ]
+            },
+
+            // CHAPTER 1.5: 深夜大肘子掠夺战 (The customized side chapter edits)
+            "c1_midnight_raid_intro": {
+                title: "第一.五章：深夜食堂与炼金红外大肘子",
+                text: "深夜两点。整个卡塞尔在一片寂静松涛中沉睡，你正饿得肚子咕咕叫。芬格尔像一头巨型银灰色猎犬一样从床上弹了起来，黄金瞳亮起贼光：“师弟！今晚一号食堂空运了巴伐利亚烟熏大猪肘和法兰克福爆浆大肠！但是，装备部阿卡杜拉老疯子最新部署了‘炼金激光防射线报警枪’。敢不敢跟师兄黑夜突袭捞一把肘子！？”",
+                narrator: "芬格尔",
+                backgroundImage: "dorm_clasp",
+                choices: [
+                    {
+                        text: "“干了！为了大肘子，大寝深夜忍者突袭队出发！”",
+                        nextId: "c1_raid_infiltration",
+                        favorability: { finger: 25 },
+                        points: 50
+                    },
+                    {
+                        text: "“（限C级）利用先前论坛积攒的高贵绩点，呼叫EVA黑入防空激光柜！”",
+                        nextId: "c1_raid_eva_hack",
+                    },
+                    {
+                        text: "“太蠢了。我们还是干嚼老坛酸菜泡面吧。”",
+                        nextId: "c1_raid_flee"
+                    }
+                ]
+            },
+            "c1_raid_infiltration": {
+                title: "第一.五章：潜行英灵殿红外迷阵",
+                text: "你们套上黑大衣像壁虎爬行。一号食堂到手了，吊着的金黄德国猪肘晶莹剔透，但冷荤柜前铺满了炼金红色激光死线。芬格尔咽下一口唾沫：“我靠，装备部这帮老头心太黑。师弟，你敏捷高，要不要尝试一下‘激光贴地滑星’？”",
+                narrator: "系统",
+                backgroundImage: "lobby_view",
+                choices: [
+                    {
+                        text: "“看我的！言灵·青铜御能强化骨骼，一个滑行翻滚完美避开！”",
+                        nextId: "c1_infiltration_success",
+                        points: 150
+                    },
+                    {
+                        text: "“师兄你一米九呢，皮糙肉厚，去当人肉肉盾吸收一部分红外阻断，我抱了肘子就跑！”",
+                        nextId: "c1_infiltration_shield",
+                        favorability: { finger: -15 }
+                    }
+                ]
+            },
+            "c1_raid_eva_hack": {
+                title: "第一.五章：EVA的温柔赛博黑客",
+                text: "【EVA（浅蓝色虚影在宿舍手提电脑微笑着在后台闪烁）】：‘检测到303不法小队行为。为了满足同门师弟的额外高蛋白热量指标，安防系统已桥接中控完毕，可以大摇大摆过去了。笨吉娃娃。’\n食堂激光一瞬间软化成了彩色派对霓虹灯！芬格尔眼泪直飞：“老婆万岁！走，去把冰柜一锅端了！”",
+                narrator: "EVA",
+                backgroundImage: "eva_hologram",
+                choices: [
+                    {
+                        text: "直指大冰柜：“走，大扫除！”",
+                        nextId: "c1_raid_feast_triumph",
+                        points: 200
+                    }
+                ]
+            },
+            "c1_raid_flee": {
+                title: "第一.五章：泡面的落魄宿命",
+                text: "你决定在寝室苟着。芬格尔像霜打的茄子般瘫在凳子上，眼泪汪汪跟你在大风之夜分捏碎的方便面：“师妹师弟啊，我们怎么就落魄到了泡面味的命运。明天咱们必须去在论坛上大肆造一波恺撒和楚子航的假消息，赚大把pt来改善伙食！”",
+                narrator: "芬格尔",
+                backgroundImage: "eating_noodle",
+                choices: [
+                    {
+                        text: "“有道理，香肠逼死英雄汉！明天咱们去论坛大闹天宫！”",
+                        nextId: "chapter2_start"
+                    }
+                ]
+            },
+            "c1_infiltration_success": {
+                title: "第一.五章：大扫荡黑森林极品冷库",
+                text: "在一秒内极度专注下，你身体如同一道闪电贴地掠过！‘咔嚓’别开冰柜，一共六只硕重无比、闪耀油脂玫瑰光彩、香飘万里的巴伐利亚烟熏肥肘正整齐躺着。芬格尔在窗边捏着玻璃留下了两排口水白印！",
+                narrator: "系统",
+                backgroundImage: "lobby_view",
+                choices: [
+                    {
+                        text: "“全抱走！咱们寝室今晚大开荤戒！”",
+                        nextId: "c1_raid_feast_triumph",
+                        favorability: { finger: 40 },
+                        points: 300
+                    }
+                ]
+            },
+            "c1_infiltration_shield": {
+                title: "第一.五章：芥末粉碎风暴",
+                text: "“我靠！你真是我的好师弟啊！”芬格尔抱着大头撞了进去！‘哔哔哔’红色警灯大亮，头顶上由装备部秘制的‘十万强效炼金芥末消杀喷头’当场剧烈朝他一米九狗头喷射！芬格尔当场变成一个通体碧绿、大哭嚎叫的大金毛！你趁夜色抄起一个香肠拉罐拼死逃出！",
+                narrator: "系统",
+                backgroundImage: "dorm_dust",
+                choices: [
+                    {
+                        text: "“太险了！师兄你的帅气绿脸明天一定会惊爆新闻部的！”",
+                        nextId: "chapter2_start",
+                        points: 50
+                    }
+                ]
+            },
+            "c1_raid_feast_triumph": {
+                title: "第一.五章：凌晨三点的303登基",
+                text: "大肘子油脂在微波加热后爆发了惊天香气！芬格尔狼吞虎咽，连皮带骨连吞4斤，吃得两眼直翻、热泪盈眶大吼：“唔喔喔喔！就是这个脆皮！油脂在血管里流淌！这大一到大八所有的委屈在今晚都得到了大成！师弟，你就是守护303的美好大天使！来，为了让明早查少大肘子的宿管闭嘴，咱们决定现在就把水搅浑，到守夜人论坛发黑黑贴转移注意力！”",
+                narrator: "芬格尔",
+                backgroundImage: "eating_sausage",
+                choices: [
+                    {
+                        text: "“哈哈，好哥们，咱们一起去在论坛兴风作浪！”",
+                        nextId: "chapter2_start"
+                    }
+                ]
+            },
+
+            "chapter2_start": {
+                title: "第二章：狂飙的守夜人内幕大作战",
+                text: "天色刚亮，卡塞尔的校园空气里依然残存着自由一日的火药味。芬格尔趴在手提电脑前，十指在键盘上敲打出如暴风雨一样的残影，满脸狂热的狗仔姿态：“师弟！快来看，新闻部昨天爆款的主贴由于我们的黑肘子保驾，在全校疯狂转发了十五万次！昂热校长的下午茶茶杯底都被人留言逼供了！我们一晚上赚了200论坛绩点！”",
+                narrator: "芬格尔",
+                backgroundImage: "forum_post",
+                choices: [
+                    {
+                        text: "“牛啊学长！带我一个，我们这就去黑市看下有什么罕见宝贝！”",
+                        nextId: "game_completed_node",
+                        points: 200
+                    },
+                    {
+                        text: "“（解锁成就：废柴的盟约）”",
+                        nextId: "game_completed_node",
+                        favorability: { finger: 15 }
+                    }
+                ]
+            },
+
+            "game_completed_node": {
+                title: "大冒险终局：303废柴宿舍的永存晨光",
+                text: "夕阳缓缓落在山头，将芝加哥远郊的松涛森林映照得一片深红。你和芬格尔坐在窗台上，把易拉罐和废纸箱踢开。芬格尔把喝空的啤酒罐随手往后一抛，罕见地在余晖下面没有露出贱相，而是目光幽远地注视着遥远的高空中那一抹浅蓝色的EVA星迹：\n\n“师弟，龙族世界的暴风雨很冷。外面的人都在争论你是凡人还是屠龙的终极兵器、是皇血还是废料。但在303这儿，只要你带够泡面，大门永远向你敞开。如果哪天诸神在冰河降世撕咬大地，师兄一定会用肉身挡在你所有人的最前面。”\n\n卡塞尔宿舍303的羁绊记录将永存于此！恭喜完成当前文字冒险。",
+                narrator: "系统",
+                backgroundImage: "dorm_victory",
+                choices: [
+                    {
+                        text: "“（重回宿舍大门口展开二周目）”",
+                        nextId: "c1_intro"
+                    }
+                ]
+            }
+        };
+
+        const BACKGROUND_STYLING = {
+            "dorm_view": { gradient: "from-slate-900 via-slate-850 to-amber-950/40", icon: "🏠", label: "卡塞尔新宿舍 303大寝" },
+            "dorm_dust": { gradient: "from-slate-950 via-zinc-900 to-amber-900/30", icon: "💨", label: "垃圾山与堆积如山的空易拉罐" },
+            "dorm_clasp": { gradient: "from-zinc-900 via-stone-850 to-slate-900", icon: "🤝", label: "废柴盟约之手" },
+            "eating_noodle": { gradient: "from-amber-950 via-orange-950 to-neutral-900", icon: "🍜", label: "热气腾腾的老坛酸菜面" },
+            "eating_sausage": { gradient: "from-red-950 via-amber-900 to-stone-950", icon: "🌭", label: "黑森林高级法兰克福香肠" },
+            "lobby_view": { gradient: "from-amber-800 via-stone-900 to-zinc-950", icon: "🏆", label: "英灵殿食堂防守线" },
+            "eva_hologram": { gradient: "from-sky-950 via-cyan-900 to-slate-950", icon: "🧬", label: "EVA的虚幻淡蓝色投影" },
+            "forum_post": { gradient: "from-indigo-900 via-slate-900 to-blue-950", icon: "✍️", label: "引爆全校的置顶加粗大红字贴" },
+            "dorm_victory": { gradient: "from-amber-900 via-indigo-950 to-slate-950", icon: "🍻", label: "宿命余晖中的两只败狗" }
+        };
+
+        const NARRATOR_THEMES = {
+            "我": { text: "text-amber-400 font-bold", border: "border-amber-500/40", bg: "bg-amber-950/20", role: "C级新生 / 303宿舍新人" },
+            "芬格尔": { text: "text-yellow-400 font-bold", border: "border-yellow-500/40", bg: "bg-yellow-950/20", role: "败狗师兄 / F级退化元老" },
+            "系统": { text: "text-slate-200 font-mono", border: "border-slate-800", bg: "bg-slate-950", role: "卡塞尔底层沙盒" },
+            "EVA": { text: "text-cyan-400 font-mono", border: "border-cyan-500/40", bg: "bg-cyan-950/20", role: "卡塞尔超人工智能" }
+        };
+
+        // Static Danmaku Array to populate beautiful floating bullet comments
+        const DUMMY_BULLET_COMMENTS = [
+            "卧槽，芬格尔居然请吃泡面了？！下红雨了！",
+            "装备部宣布一号食堂发现高能激光断层！一定是有人黑了肘子橱柜！",
+            "恺撒学长说，凡是抓住偷肘子犯人的，悬赏三万pt！",
+            "楚子航今天切土豆丝厚度精准到了微米，恐怖如斯",
+            "原来以前芬格尔真的是A级王牌？！",
+            "EVA大姐好，我的大一成绩能不能悄悄改一下（双手合十",
+            "这大猪肘看饿了我了，老板来个加急外卖",
+            "芬格尔师兄，你被爆出逃了古德里安教授三万字的自我检讨书！",
+            "303果然是藏龙卧虎的地方（指败狗巢穴）",
+            "青铜御连微型榴弹都挡得住？真的假的"
+        ];
+
+        let currentStoryNode = "c1_intro";
+
+        // Tab Switching Mechanism
+        function switchTab(tabId) {
+            // Hide all sections first
+            document.getElementById("pane_story").classList.add("hidden");
+            document.getElementById("pane_chat").classList.add("hidden");
+            document.getElementById("pane_forum").classList.add("hidden");
+            document.getElementById("pane_store").classList.add("hidden");
+            document.getElementById("pane_profile").classList.add("hidden");
+
+            // Show active
+            document.getElementById("pane_" + tabId).classList.remove("hidden");
+
+            // Update desktop sidebar styles
+            const tabs = ["story", "chat", "forum", "store", "profile"];
+            tabs.forEach(t => {
+                const el = document.getElementById("tab_" + t);
+                if (el) {
+                    if (t === tabId) {
+                        el.className = "sidebar-tab active-tab w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all bg-amber-950/30 text-amber-300 border-l-4 border-amber-500 font-medium";
+                    } else {
+                        el.className = "sidebar-tab w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-slate-400 hover:bg-slate-800/40 hover:text-slate-200 transition-all border-l-4 border-transparent font-medium";
+                    }
+                }
+            });
+
+            // Close mobile menu
+            document.getElementById("mobile_dropdown").classList.add("hidden");
+            const icon = document.getElementById("mobile_menu_icon");
+            if (icon) icon.setAttribute("data-lucide", "menu");
+            lucide.createIcons();
+
+            // Custom UI highlights on switch
+            if (tabId === "chat") {
+                scrollChatToBottom();
+            }
+        }
+
+        // Mobile Menu Toggler
+        function toggleMobileMenu() {
+            const dropdown = document.getElementById("mobile_dropdown");
+            const icon = document.getElementById("mobile_menu_icon");
+            if (dropdown.classList.contains("hidden")) {
+                dropdown.classList.remove("hidden");
+                icon.setAttribute("data-lucide", "x");
+            } else {
+                dropdown.classList.add("hidden");
+                icon.setAttribute("data-lucide", "menu");
+            }
+            lucide.createIcons();
+        }
+
+        // Custom high quality sliding alerts (Toasts)
+        function showNotification(message) {
+            const container = document.getElementById("toast_container");
+            const toastId = `toast_${Date.now()}`;
+            
+            const div = document.createElement("div");
+            div.id = toastId;
+            div.className = "bg-slate-900 border border-amber-500/50 shadow-xl text-amber-200 p-3.5 rounded-lg text-xs md:text-sm tracking-wide leading-relaxed font-semibold flex items-start gap-2.5 backdrop-blur-md animate-slide-in pointer-events-auto select-none";
+            div.innerHTML = `
+                <span class="shrink-0 text-base">✨</span>
+                <p class="flex-1">${message}</p>
+            `;
+            
+            container.appendChild(div);
+
+            setTimeout(() => {
+                div.classList.add("opacity-0", "transition-opacity", "duration-500");
+                setTimeout(() => div.remove(), 500);
+            }, 3500);
+        }
+
+        // Dynamic State Synchronization inside DOM indicators
+        function syncStateWidgets() {
+            // Update grades badges
+            const gradeText = stats.academicGrade + " 级血统";
+            document.getElementById("aside_grade").innerText = gradeText;
+            document.getElementById("mobile_grade").innerText = stats.academicGrade + "级";
+            document.getElementById("stat_profile_grade").innerText = gradeText;
+
+            // Colors for grades
+            let gradeColor = "text-green-500 border-green-500 bg-green-950/20";
+            if (stats.academicGrade === "S") gradeColor = "text-red-500 border-red-500 bg-red-950/20";
+            if (stats.academicGrade === "A") gradeColor = "text-orange-500 border-orange-500 bg-orange-950/20";
+            if (stats.academicGrade === "B") gradeColor = "text-yellow-500 border-yellow-500 bg-yellow-950/25";
+
+            document.getElementById("aside_grade").className = `text-[10px] font-bold font-mono px-1.5 py-0.5 rounded border shadow-inner ${gradeColor}`;
+            document.getElementById("stat_profile_grade").className = `text-2xl mt-1 font-extrabold ${gradeColor.split(" ")[0]}`;
+
+            // Points
+            const ptsText = stats.forumPoints + " pt";
+            document.getElementById("aside_points").innerText = ptsText;
+            document.getElementById("mobile_points").innerText = ptsText;
+
+            // Profile metrics
+            document.getElementById("stat_finger_favor").innerText = stats.fingerFavorability + " cp";
+            document.getElementById("stat_lumingfei_favor").innerText = stats.luMingfeiFavorability + " cp";
+            document.getElementById("stat_caesar_favor").innerText = stats.caesarFavorability + " cp";
+
+            // Achievements unlocked badges
+            if (stats.secretsUnlocked.greenlandIncident) {
+                const el = document.getElementById("badge_bond_greenland");
+                el.classList.remove("opacity-40");
+                document.getElementById("badge_greenland_text").innerText = "已解锁文档";
+                document.getElementById("badge_greenland_text").className = "bg-amber-600/20 text-amber-400 text-[9px] font-bold px-2 py-0.5 rounded uppercase";
+            }
+            if (stats.secretsUnlocked.evaConnection) {
+                const el = document.getElementById("badge_bond_eva");
+                el.classList.remove("opacity-40");
+                document.getElementById("badge_eva_text").innerText = "已加筑通道";
+                document.getElementById("badge_eva_text").className = "bg-cyan-600/20 text-cyan-400 text-[9px] font-bold px-2 py-0.5 rounded uppercase";
+            }
+            if (stats.secretsUnlocked.prodigyPast) {
+                const el = document.getElementById("badge_bond_prodigy");
+                el.classList.remove("opacity-40");
+                document.getElementById("badge_prodigy_text").innerText = "勋章已回炉";
+                document.getElementById("badge_prodigy_text").className = "bg-yellow-600/20 text-yellow-400 text-[9px] font-bold px-2 py-0.5 rounded uppercase";
+            }
+        }
+
+        // Render current Visual Novel Frame
+        function renderStoryNode() {
+            const node = STORY_NODES[currentStoryNode] || STORY_NODES["c1_intro"];
+
+            // Titles and text
+            document.getElementById("story_chapter_title").innerText = node.title;
+            document.getElementById("story_text").innerText = node.text;
+
+            // Speaker metadata tag
+            const speakerTag = document.getElementById("story_speaker");
+            speakerTag.innerText = node.narrator;
+
+            const theme = NARRATOR_THEMES[node.narrator] || NARRATOR_THEMES["系统"];
+            speakerTag.className = `text-xs md:text-sm font-semibold px-2.5 py-0.5 rounded border ${theme.text} ${theme.border} ${theme.bg}`;
+            document.getElementById("story_speaker_role").innerText = theme.role;
+
+            // Background dynamic setup
+            const stage = document.getElementById("story_stage");
+            const styling = BACKGROUND_STYLING[node.backgroundImage] || BACKGROUND_STYLING["dorm_view"];
+            
+            // Apply Tailwind gradient
+            stage.className = `relative my-6 h-64 md:h-80 rounded-xl overflow-hidden shadow-2xl border border-slate-800 flex flex-col justify-between p-6 bg-gradient-to-br ${styling.gradient} transition-all duration-500 ease-out ambient-glow`;
+            document.getElementById("stage_badge_icon").innerText = styling.icon;
+            document.getElementById("stage_badge_text").innerText = styling.label;
+
+            // Render Character sticker
+            const charDiv = document.getElementById("stage_character");
+            if (node.narrator === "芬格尔") {
+                charDiv.innerText = "🐕";
+            } else if (node.narrator === "路明非") {
+                charDiv.innerText = "🎒";
+            } else if (node.narrator === "系统") {
+                charDiv.innerText = "⚙️";
+            } else if (node.narrator === "EVA") {
+                charDiv.innerText = "📡";
+            } else {
+                charDiv.innerText = "🏠";
+            }
+
+            // Hydrate Story Choice action triggers
+            const choicesPanel = document.getElementById("story_choices");
+            choicesPanel.innerHTML = "";
+
+            node.choices.forEach((choice, index) => {
+                // If it requires a bloodline grade and player does not possess it, block it gracefully
+                const button = document.createElement("button");
+                button.className = "w-full text-left bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-amber-600/40 rounded-xl px-5 py-3 text-xs md:text-sm text-slate-200 transition-all flex items-center justify-between hover:translate-x-1 font-medium focus:outline-none";
+                button.onclick = () => selectChoice(choice);
+                button.innerHTML = `
+                    <span>${choice.text}</span>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500"></i>
+                `;
+                choicesPanel.appendChild(button);
+            });
+
+            lucide.createIcons();
+        }
+
+        // Handle path choice selection
+        function selectChoice(choice) {
+            // Apply rewards and stats shifts
+            if (choice.favorability) {
+                if (choice.favorability.finger) {
+                    stats.fingerFavorability += choice.favorability.finger;
+                    showNotification(`❤️ 芬格尔好感上升：+${choice.favorability.finger}!`);
+                }
+                if (choice.favorability.luMingfei) {
+                    stats.luMingfeiFavorability += choice.favorability.luMingfei;
+                    showNotification(`🎒 路明非契合度上升：+${choice.favorability.luMingfei}!`);
+                }
+            }
+
+            if (choice.points) {
+                stats.forumPoints += choice.points;
+                showNotification(`💰 论坛积分入库：+${choice.points} pt!`);
+            }
+
+            // Advance Bloodline Grade dynamically as points surge to satisfy standard gameplay rewards!
+            if (stats.forumPoints >= 400 && stats.academicGrade !== "S") {
+                stats.academicGrade = "S";
+                showNotification("🚨 【血皇鸣响】恭喜！你的论坛点数破界，血统升级至 S 级！");
+            } else if (stats.forumPoints >= 250 && stats.academicGrade === "C") {
+                stats.academicGrade = "A";
+                showNotification("🔥 恭喜！你踏实拼命，成绩优异，血统评级升级至 A 级！");
+            } else if (stats.forumPoints >= 150 && stats.academicGrade === "C") {
+                stats.academicGrade = "B";
+                showNotification("⭐ 恭喜！契合勋章累积，成绩评级上升至 B 级！");
+            }
+
+            // Set next dialogue node
+            currentStoryNode = choice.nextId;
+            syncStateWidgets();
+            renderStoryNode();
+        }
+
+        // Toggle Bullet danmaku visibility
+        let bulletsOn = true;
+        let bulletInterval = null;
+
+        function toggleBullets() {
+            bulletsOn = !bulletsOn;
+            const text = document.getElementById("bullet_toggle_text");
+            const btn = document.getElementById("bullet_toggle_btn");
+            const lane = document.getElementById("bullet_lane");
+
+            if (bulletsOn) {
+                text.innerText = "吐槽弹幕: 开";
+                lane.classList.remove("hidden");
+                startFloatingBullets();
+            } else {
+                text.innerText = "吐槽弹幕: 关";
+                lane.classList.add("hidden");
+                clearInterval(bulletInterval);
+                lane.innerHTML = "";
+            }
+        }
+
+        function spawnBullet() {
+            const lane = document.getElementById("bullet_lane");
+            if (!lane || !bulletsOn) return;
+
+            const randomText = DUMMY_BULLET_COMMENTS[Math.floor(Math.random() * DUMMY_BULLET_COMMENTS.length)];
+            const randomAuthor = ["恺撒头马", "楚党保洁员", "Eva的主机", "303声纳探测员", "昂热的钟头"][Math.floor(Math.random() * 5)];
+            const randomColor = ["text-amber-400", "text-cyan-400", "text-rose-400", "text-emerald-400", "text-white"][Math.floor(Math.random() * 5)];
+            const yOffset = Math.floor(Math.random() * 70) + 10; // random height percent
+
+            const bullet = document.createElement("div");
+            bullet.className = "absolute whitespace-nowrap danmaku-item font-mono text-xs font-semibold px-3 py-1 bg-slate-905/75 border border-slate-800/50 rounded-full flex items-center gap-1.5 shadow backdrop-blur-sm pointer-events-none select-none " + randomColor;
+            bullet.style.top = yOffset + "%";
+            bullet.innerHTML = `<span>💬 [${randomAuthor}]: ${randomText}</span>`;
+
+            lane.appendChild(bullet);
+
+            // Remove after crossing screen
+            setTimeout(() => bullet.remove(), 12000);
+        }
+
+        function startFloatingBullets() {
+            clearInterval(bulletInterval);
+            // Spawn initial ones immediately
+            for(let i=0; i<3; i++) {
+                setTimeout(spawnBullet, i * 1500);
+            }
+            bulletInterval = setInterval(spawnBullet, 3200);
+        }
+
+        // Tab 2: Simulated chatbot triggers and response fallbacks
+        const MOCK_REPLIES = {
+            beggar: [
+                "“师弟！你真的是在套我最后这一美分吗？！*芬格尔当场抱住你的膝盖直嚎* 我浑身上下除了这件两个月没洗的衬衫，就剩一肚子对大牛肉的极度渴望了！快，求求你今晚卡里刷一打香肠盖饭，明天起床我自愿帮你洗阳台！”",
+                "“大肘子！德国蜜汁大烤肉！嗷呜！*芬格尔口水落了一地* 只要你今晚请我吃顿夜宵，哪怕学校明天查出猪肘失窃，我都可以拍胸脯保证在论坛上亲自顶起恺撒半夜穿着玫瑰花红格子裤衩在草坪上和看门狗谈人生的终极假消息替你背锅！”",
+                "“师弟，你对力量的理解还是过于飘渺。只有红油和巴伐利亚烤大肠才能让这副一米九的躯壳爆发出璀璨神眷的血统威能！所以，今晚食堂，刷卡否？嘿嘿嘿！”"
+            ],
+            paparazzi: [
+                "“【狗眼天下爆料】：据新闻部派驻在女寝防暴激光井底部的眼线拼死汇报，恺撒少爷今天上午居然因为防静电喷雾用完，罕见地在理发沙龙上气得买下了整座百货商场！照片原图仅售 5 积分，买不了吃亏买不了上当！”",
+                "“楚子航学长在食堂拿尺子称土豆丝厚度的特快照片到手了！看那个冷峻的面孔、那个精密的面瘫专注度，不知道的还以为他在制造炼金终极核弹飞头！师弟只要你提供2个大香肠，这条爆料贴你提五成红利！”",
+                "“【夜间快门头条】：听闻校长今天上午喝下午茶时，又一次抱怨古德里安教授脑子不太灵光，天天抱着拉格啤酒对昂热的昂贵西服哭鼻子，说自己拿不到卡塞尔大金质功勋勋章老脸无处搁。这也太有爆点了！”"
+            ],
+            hero: [
+                "“……冰洋下的世界真的很黑。不仅有撕碎一切的格陵兰刺骨狂澜，还有无数被风夹卷掩埋的昔日战歌。芬格尔深呼气：‘师弟，我已经犯过一次逃兵的重罪。这一次，不管诸神和那头狂暴的纯血龙王带来多深的灭顶冰川，我都绝对不会再当逃避宿命的狂澜败狗。’这就是我的言灵·青铜御！”",
+                "“别以为师兄只是个混吃等死的F级吉娃娃。这双因营养不良常常有些发黄泛困的黄金瞳里，曾经也倒映过诸神权柄倒塌的神谕晨曦。既然你和我共处303，天塌下来有师长师兄顶着，你就带着明非去外面快活地大杀八方吧！”"
+            ],
+            eva: [
+                "【EVA】：‘检测到笨蛋芬格尔又在向亲爱的师弟装可怜套肉罐头了。我已在后台将他的本月绩点信用分连带降格两级扣留。’\n芬格尔两手一捏，老脸发红：‘哎呀，我的爱妃，给师兄留点体面啊喂！今晚一定老实给你刷几个底层星轨编译协议宵夜！’",
+                "【EVA（浅蓝色高保真幽影闪烁）】：‘笨吉娃娃。我知道你一直在303最底层的机房主板内藏匿你和路明非偷藏的食堂香肠记录。我已经帮你们将那些探针记录清洗得极其清爽，放心去啃你们的大烤猪肘吧。但是请尽量吃得温雅一些。’"
+            ]
+        };
+
+        function changeChatChannel() {
+            const channel = document.getElementById("chat_mode_select").value;
+            let introText = "“咳咳，这里是新闻部芬格尔的绝密备用线路，师弟你有什么高见？”";
+            if (channel === "paparazzi") introText = "“【新闻部主笔热线】：我的狗仔雷达已经饥渴难耐了！快说，师弟你今天目击到了谁在操场亲热？是不是楚子航和哪个大一学妹在拔河？！”";
+            if (channel === "hero") introText = "“……宿舍外面这阵冷风真吵啊。师弟，有些宿命注定要用鲜血去洗刷。如果决定举起你的炼金折刀，那就记住：我的肩膀，就是你最坚韧的青铜防壁。”";
+            if (channel === "eva") introText = "【EVA】：‘赛博星轨通信桥接成功。这里是卡塞尔中央人工智能主脑。检测到芬格尔当前的脑多巴胺由于看见你带来的烤肠而激升了32%。笨蛋大犬。’";
+
+            const chatScroll = document.getElementById("chat_scroll");
+            const div = document.createElement("div");
+            div.className = "flex gap-3 max-w-[85%] select-text animate-slide-in";
+            div.innerHTML = `
+                <img src="https://images.unsplash.com/photo-1628157582853-a796fa650a6a?auto=format&fit=crop&w=120&h=120" class="w-8 h-8 rounded-full shrink-0 border border-slate-800" alt="">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-xs font-bold text-amber-400">芬格尔 <span class="text-[9px] text-slate-500 font-mono">[切换到:${channel}]</span></span>
+                        <span class="text-[9px] text-slate-600 font-mono">${new Date().toTimeString().split(' ')[0].substring(0, 5)}</span>
+                    </div>
+                    <div class="bg-indigo-950/20 border border-indigo-900/40 text-amber-200 rounded-2xl rounded-tl-none p-3.5 text-xs md:text-sm leading-relaxed tracking-wide shadow-md font-mono">
+                        ${introText}
+                    </div>
+                </div>
+            `;
+            chatScroll.appendChild(div);
+            scrollChatToBottom();
+        }
+
+        function scrollChatToBottom() {
+            const chatScroll = document.getElementById("chat_scroll");
+            chatScroll.scrollTop = chatScroll.scrollHeight;
+        }
+
+        function sendPresetMsg(txt) {
+            document.getElementById("chat_input_text").value = txt;
+            sendChatFromInput();
+        }
+
+        function handleInputKey(event) {
+            if (event.key === 'Enter') {
+                sendChatFromInput();
+            }
+        }
+
+        function sendChatFromInput() {
+            const input = document.getElementById("chat_input_text");
+            const text = input.value.trim();
+            if(!text) return;
+
+            input.value = "";
+
+            const chatScroll = document.getElementById("chat_scroll");
+            // 1. User user bubbles
+            const uDiv = document.createElement("div");
+            uDiv.className = "flex gap-3 max-w-[85%] ml-auto justify-end select-text animate-slide-in";
+            uDiv.innerHTML = `
+                <div class="text-right">
+                    <div class="flex items-center gap-2 mb-1 justify-end">
+                        <span class="text-[9px] text-slate-600 font-mono">${new Date().toTimeString().split(' ')[0].substring(0, 5)}</span>
+                        <span class="text-xs font-bold text-slate-300">我 (C级成员)</span>
+                    </div>
+                    <div class="bg-amber-600 text-slate-950 rounded-2xl rounded-tr-none p-3.5 text-xs md:text-sm font-semibold leading-relaxed tracking-wide shadow-md">
+                        ${text}
+                    </div>
+                </div>
+                <div class="w-8 h-8 rounded-full bg-slate-800 border border-amber-500/30 flex items-center justify-center text-xs text-amber-300 shrink-0 select-none">我</div>
+            `;
+            chatScroll.appendChild(uDiv);
+            scrollChatToBottom();
+
+            // 2. Trigger Finger Typing Simulated delay response
+            setTimeout(() => {
+                const channel = document.getElementById("chat_mode_select").value;
+                const pool = MOCK_REPLIES[channel] || MOCK_REPLIES.beggar;
+                const replyText = pool[Math.floor(Math.random() * pool.length)];
+
+                const fDiv = document.createElement("div");
+                fDiv.className = "flex gap-3 max-w-[85%] select-text animate-slide-in";
+                fDiv.innerHTML = `
+                    <img src="https://images.unsplash.com/photo-1628157582853-a796fa650a6a?auto=format&fit=crop&w=120&h=120" class="w-8 h-8 rounded-full shrink-0 border border-slate-800" alt="">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-xs font-bold text-teal-400">芬格尔 (芬格尔大忽悠)</span>
+                            <span class="text-[9px] text-slate-600 font-mono">${new Date().toTimeString().split(' ')[0].substring(0, 5)}</span>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 text-slate-200 rounded-2xl rounded-tl-none p-3.5 text-xs md:text-sm leading-relaxed tracking-wide shadow-md">
+                            ${replyText}
+                        </div>
+                    </div>
+                `;
+                chatScroll.appendChild(fDiv);
+                scrollChatToBottom();
+            }, 1000);
+        }
+
+        // Tab 3: Dynamic rumor/gossip thread generation in Forum
+        function likeStaticPost(button) {
+            const span = button.querySelector("span");
+            if (button.classList.contains("liked")) {
+                button.classList.remove("liked", "text-rose-400");
+                button.classList.add("text-slate-500");
+                span.innerText = (parseInt(span.innerText) - 1) + " 赞赏";
+            } else {
+                button.classList.add("liked", "text-rose-400");
+                button.classList.remove("text-slate-500");
+                span.innerText = (parseInt(span.innerText) + 1) + " 赞赏";
+                showNotification("❤️ 已成功赠送论坛赞赏点 +1 pt！");
+            }
+        }
+
+        function createDynamicPost() {
+            const input = document.getElementById("forum_topic_input");
+            const keyword = input.value.trim();
+            if(!keyword) {
+                showNotification("⚠️ 请输入一个搞怪爆料词！例如：‘芥末大肘子’ 或 ‘恺撒发胶’");
+                return;
+            }
+
+            input.value = "";
+            showNotification(`📡 正在黑入守夜人总台，紧急爆料关于【${keyword}】的特爆红字谣言贴...`);
+
+            // Simulating prompt generation inside client
+            setTimeout(() => {
+                const target = document.getElementById("dynamic_forum_target");
+
+                const div = document.createElement("div");
+                div.className = "bg-slate-950/70 border-2 border-amber-600/60 rounded-xl p-5 hover:border-amber-500 transition-all shadow-xl animate-slide-in mb-6";
+                div.innerHTML = `
+                    <div class="flex items-center justify-between mb-3.5 select-none">
+                        <div class="flex items-center gap-2.5">
+                            <img src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=80&h=80" class="w-8 h-8 rounded-full border border-yellow-500/20" alt="">
+                            <div>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-xs font-bold text-amber-200">新闻狗仔突击队</span>
+                                    <span class="text-[9px] text-amber-400 bg-amber-950 px-1 py-0.2 rounded border border-amber-800">首发专员</span>
+                                </div>
+                                <span class="text-[9px] text-slate-500 font-mono">刚刚</span>
+                            </div>
+                        </div>
+                        <span class="bg-amber-500/10 text-amber-500 border border-amber-500/30 text-[9px] font-bold px-2 py-0.5 rounded font-mono select-none flex items-center gap-1">
+                            🔥 刚刚引爆
+                        </span>
+                    </div>
+                    <h4 class="text-sm font-semibold text-slate-100 mb-2 leading-snug">
+                        ⚡ 【守夜人独家大红字】突发！关于“${keyword}”的卡塞尔炼金流终极测试流产，装备部全员戴口罩跑圈！
+                    </h4>
+                    <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                        重金爆料！根据今天一号食堂和装备副校长寝室的底层暖风散发器传出的诡异烟熏香气阻尼。新生在芬格尔师兄的秘密辅导下，为了研制出搭载纯正暴元血液的‘炼金高浓度${keyword}’，不惜把整箱德国黑森林猪肉扛进超级机房内做激光干涉消光测试。阿卡杜拉所长得知此不法侵略后，当场穿了一身镀纯银防爆钢铠哭天喊地，高喊‘这会引发整个密歇根湖一万吨级的水爆空射！’，要求路明非舍友连夜上交学术自我大反省！
+                    </p>
+                    
+                    <div class="border-t border-slate-800/60 pt-3 mt-3">
+                        <h5 class="text-[10px] text-slate-500 font-mono uppercase mb-2">精选吐槽热评 (3条)</h5>
+                        <div class="space-y-2 text-xs">
+                            <div class="bg-slate-900/60 p-2 rounded">
+                                <span class="text-amber-400 font-bold">路明非</span>: <span class="text-slate-300">“卧槽学长！我只是去点了一盘蛋炒饭，你们怎么在谣言里把我写成了提纯${keyword}的高危爆除狂人！昂热校长的折刀已经架在我脖子上了喂！”</span>
+                            </div>
+                            <div class="bg-slate-900/60 p-2 rounded">
+                                <span class="text-purple-400 font-bold">恺撒(加图索首领)</span>: <span class="text-slate-300">“有趣的戏码。原来${keyword}也能具备加图索特质的尊贵气派。只要你们能把楚子航捂脸尖叫的原照打包发我，学生会全额支付此帖公关红利。”</span>
+                            </div>
+                            <div class="bg-slate-900/60 p-2 rounded">
+                                <span class="text-yellow-400 font-bold">败狗之王芬格尔</span>: <span class="text-slate-300">“高价兜售恺撒与楚子航抢发箍珍贵照，顺手拉着路大衰仔手捏${keyword}做极暗炼金的大法照！只需5积分，冲冲冲！”</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-4 text-xs font-mono text-slate-500 select-none mt-4">
+                        <button onclick="likeStaticPost(this)" class="flex items-center gap-1 hover:text-rose-400 transition-colors">
+                            <i data-lucide="thumbs-up" class="w-3.5 h-3.5"></i>
+                            <span>15 赞赏</span>
+                        </button>
+                        <span class="flex items-center gap-1">
+                            <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+                            <span>12条高评</span>
+                        </span>
+                    </div>
+                `;
+
+                target.prepend(div);
+                lucide.createIcons();
+                // Award posting bonus pt
+                stats.forumPoints += 25;
+                syncStateWidgets();
+                showNotification(`⭐ 发帖爆料红利已计入：+25 pt! 当前点数：${stats.forumPoints}`);
+                
+                // Scroll to top of feeds
+                document.getElementById("forum_feed_scroll").scrollTop = 0;
+            }, 1200);
+        }
+
+        // Tab 4: Store purchase flow
+        function buyMarketItem(itemId, cost, itemName) {
+            if (stats.secretsUnlocked[itemId]) {
+                showNotification(`⚠️ 【已连接】你此前已经买下过“${itemName}”，快去在羁绊档案里瞅瞅吧！`);
+                return;
+            }
+
+            if (stats.forumPoints < cost) {
+                showNotification(`❌ 积分余额不足！“${itemName}”需要消耗 ${cost} pt，你当前仅持有 ${stats.forumPoints} pt。快去主线选择丰沛奖励吧！`);
+                return;
+            }
+
+            // Execute exchange
+            stats.forumPoints -= cost;
+            stats.secretsUnlocked[itemId] = true;
+            syncStateWidgets();
+            showNotification(`🔑 【解码大告成】你用珍贵的 ${cost} 论坛绩点换取了：《${itemName}》！羁绊深层档案已点亮！`);
+        }
+
+        // Initialize Playable Board
+        window.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
+            syncStateWidgets();
+            renderStoryNode();
+            startFloatingBullets();
+            showNotification("🏰 欢迎来到卡塞尔学院！请在 303 大寝内推开橡木大门展开冒险。");
+        });
+    </script>
+</body>
+</html>
